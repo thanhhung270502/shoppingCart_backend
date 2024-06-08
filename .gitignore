@@ -1,0 +1,6 @@
+dist/
+node_modules/
+.vscode/
+tmp/
+test/convert/*.txt
+.env
