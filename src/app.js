@@ -5,32 +5,32 @@ const session = require('express-session');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const passport = require('passport');
-const passportStrategy = require('./passport');
+// const passportStrategy = require('./passport');
 require('dotenv').config();
 
 const app = express();
 
 const options = {
     definition: {
-        openapi: "3.0.0",
+        openapi: '3.0.0',
         info: {
-            title: "",
-            version: "",
-            description: ""
+            title: '',
+            version: '',
+            description: '',
         },
         servers: [
             {
-                url: "http://localhost:3000"
-            }
-        ]
+                url: 'http://localhost:3000',
+            },
+        ],
     },
-    apis: ["./src/routes/*.js", "./src/routes/swagger/*.js"]
-}
+    apis: ['./src/routes/*.js', './src/routes/swagger/*.js'],
+};
 
-const specs =swaggerJsDoc(options)
+const specs = swaggerJsDoc(options);
 
 app.use(express.json());
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use(express.urlencoded({ extended: false }));
 app.use(
     cors({

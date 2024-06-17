@@ -3,6 +3,7 @@ const { encode } = require('../helper/user');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../middlewares/authMiddlewares');
 const bcrypt = require('bcrypt');
+const utils = require('../../utils/index');
 
 class UsersController {
     // [GET] /
@@ -43,48 +44,49 @@ class UsersController {
     // 201: successful, 409: User exists
     async create(req, res) {
         try {
-            const { email, password, name, provider, avatar } = req.body;
-            const role = 'normal';
+            const { phone_number, password, name } = req.body;
 
             // Check if the user already exists
-            const query = 'SELECT * FROM users WHERE email = $1 AND provider = $2';
-            var getUser = await pool.query(query, [email, 'manual']);
+            const query = 'SELECT * FROM users WHERE phone_number = $1 AND provider = $2';
+            var getUser = await pool.query(query, [phone_number, 'manual']);
+
             if (getUser.rows.length > 0) {
-                res.status(409).json({
-                    message: 'Email existed',
-                    code: 409,
+                return res.status(400).json({
+                    message: 'Phone Number existed',
+                    code: 400,
                     body: '',
                 });
-            } else {
-                // var newPassword = encode(password);
-                const hashedPassword = await bcrypt.hash(password, 10);
-
-                const response = await pool.query(
-                    'INSERT INTO users (email, password, name, provider, role, avatar) VALUES ($1, $2, $3, $4, $5, $6)',
-                    [email, hashedPassword, name, provider, role, avatar],
-                );
-
-                getUser = await pool.query('SELECT * FROM users WHERE email = $1 AND password = $2 AND provider = $3', [
-                    email,
-                    hashedPassword,
-                    'manual',
-                ]);
-
-                return res.status(201).json({
-                    message: 'User created successfully',
-                    code: 201,
-                    body: {
-                        accessToken: generateToken(getUser.rows[0].id, getUser.rows[0].role),
-                        user: {
-                            id: getUser.rows[0].id,
-                            role: getUser.rows[0].role,
-                            email: getUser.rows[0].email,
-                            name: getUser.rows[0].name,
-                            avatar: getUser.rows[0].avatar,
-                        },
-                    },
-                });
             }
+
+            // var newPassword = encode(password);
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const id = await bcrypt.hash(phone_number, 10);
+            const currentTime = utils.getCurrentTimeFormatted();
+
+            const response = await pool.query(
+                'INSERT INTO users (id, phone_number, password, name, provider, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)',
+                [id, phone_number, hashedPassword, name, 'manual', 'customer', currentTime, currentTime],
+            );
+
+            getUser = await pool.query(
+                'SELECT * FROM users WHERE phone_number = $1 AND password = $2 AND provider = $3',
+                [phone_number, hashedPassword, 'manual'],
+            );
+
+            return res.status(201).json({
+                message: 'User created successfully',
+                code: 201,
+                body: {
+                    accessToken: generateToken(getUser.rows[0].id, getUser.rows[0].role),
+                    user: {
+                        id: getUser.rows[0].id,
+                        role: getUser.rows[0].role,
+                        phone_number: getUser.rows[0].phone_number,
+                        name: getUser.rows[0].name,
+                        avatar: getUser.rows[0].avatar,
+                    },
+                },
+            });
         } catch (err) {
             console.log(err);
             return res.status(500).json('Internal Server Error');

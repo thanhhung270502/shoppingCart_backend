@@ -8,18 +8,17 @@ class SessionsController {
     // [POST] /
     async create(req, res) {
         try {
-            const { email, password } = req.body;
+            const { phone_number, password } = req.body;
 
-            if (!email || !password) return res.status(400).json({ message: 'Invalid email or password' });
+            if (!phone_number || !password)
+                return res.status(400).json({ message: 'Invalid phone_number or password' });
 
-            const query = 'SELECT * FROM users WHERE email = $1 AND provider = $2';
-            const response = await pool.query(query, [email, 'manual']);
+            const query = 'SELECT * FROM users WHERE phone_number = $1 AND provider = $2';
+            const response = await pool.query(query, [phone_number, 'manual']);
 
             if (response.rows.length === 0) {
                 return res.status(400).json({ message: 'Account not found', code: 400 });
             }
-
-            console.log(response.rows[0].password);
 
             const passwordMatch = await bcrypt.compare(password, response.rows[0].password);
 
@@ -35,6 +34,7 @@ class SessionsController {
                             email: response.rows[0].email,
                             name: response.rows[0].name,
                             avatar: response.rows[0].avatar,
+                            phone_number: response.rows[0].phone_number,
                         },
                     },
                 });

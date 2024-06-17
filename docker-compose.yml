@@ -11,7 +11,7 @@ services:
     #         - db
 
     db:
-        container_name: nhlcodingDB
+        container_name: polkadotsDB
         image: postgres
         volumes:
             - ./tmp/db:/var/lib/postgresql/data
@@ -19,5 +19,5 @@ services:
             - '5433:5432'
         environment:
             - POSTGRES_PASSWORD=password
-            - POSTGRES_USER=nhlcoding
-            - POSTGRES_DB=nhlcoding
+            - POSTGRES_USER=polkadots
+            - POSTGRES_DB=polkadots
