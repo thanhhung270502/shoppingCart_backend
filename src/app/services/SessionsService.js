@@ -33,8 +33,9 @@ class SessionsController {
                             role: response.rows[0].role,
                             email: response.rows[0].email,
                             name: response.rows[0].name,
-                            avatar: response.rows[0].avatar,
                             phone_number: response.rows[0].phone_number,
+                            date_birth: response.rows[0].date_birth,
+                            gender: response.rows[0].gender,
                         },
                     },
                 });

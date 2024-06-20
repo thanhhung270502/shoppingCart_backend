@@ -3,6 +3,12 @@ const router = express.Router();
 
 const usersService = require('../app/services/UsersService');
 
+router.put('/update/profile', usersService.updateProfile);
+router.put('/update/phone', usersService.updatePhone);
+router.put('/update/email', usersService.updateEmail);
+router.put('/update/password', usersService.updatePassword);
+router.post('/avatar', usersService.getAvatar);
+
 /**
  * @swagger
  * /users/{slug}:
@@ -30,20 +36,20 @@ const usersService = require('../app/services/UsersService');
  *                                  properties:
  *                                      user:
  *                                        allOf:
- *                                          - $ref: '#/components/schemas/Id'    
- *                                          - $ref: '#/components/schemas/Authentication'    
- *                                          - $ref: '#/components/schemas/User'    
+ *                                          - $ref: '#/components/schemas/Id'
+ *                                          - $ref: '#/components/schemas/Authentication'
+ *                                          - $ref: '#/components/schemas/User'
  *          404:
  *              description: User not found
  *              content:
  *                  application/json:
  *                      schema:
- *                        $ref: '#/components/schemas/Response' 
+ *                        $ref: '#/components/schemas/Response'
  *                      example:
  *                        message: User not found
  *                        code: 404
  *          500:
- *              description: Internal Server Error          
+ *              description: Internal Server Error
  */
 router.get('/:slug', usersService.show);
 
@@ -63,10 +69,10 @@ router.get('/:slug', usersService.show);
  *                          items:
  *                              allOf:
  *                                  - $ref: '#/components/schemas/Id'
- *                                  - $ref: '#/components/schemas/Authentication'      
- *                                  - $ref: '#/components/schemas/User'  
+ *                                  - $ref: '#/components/schemas/Authentication'
+ *                                  - $ref: '#/components/schemas/User'
  *          500:
- *              description: Internal Server Error              
+ *              description: Internal Server Error
  */
 router.get('/', usersService.index);
 
@@ -90,7 +96,7 @@ router.get('/', usersService.index);
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LoginResponse' 
+ *               $ref: '#/components/schemas/LoginResponse'
  *             example:
  *                  message: User created successfully
  *                  code: 201
@@ -100,19 +106,19 @@ router.get('/', usersService.index);
  *                          id: 1
  *                          role: normal
  *                          name: NormalUser
- *                          avatar: https://example.com/avatar.png 
-  *       '409':
+ *                          avatar: https://example.com/avatar.png
+ *       '409':
  *           description: This email already exists
  *           content:
  *             application/json:
  *               schema:
- *                 $ref: '#/components/schemas/Response' 
+ *                 $ref: '#/components/schemas/Response'
  *               example:
  *                 message: This email already exists
  *                 code: 409
  *                 body: ''
  *       '500':
- *         description: Internal Server Error   
+ *         description: Internal Server Error
  */
 router.post('/', usersService.create);
 
