@@ -5,7 +5,7 @@ const session = require('express-session');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const passport = require('passport');
-// const passportStrategy = require('./passport');
+const passportStrategy = require('./passport');
 require('dotenv').config();
 
 const app = express();

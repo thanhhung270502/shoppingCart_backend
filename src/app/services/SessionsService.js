@@ -8,13 +8,22 @@ class SessionsController {
     // [POST] /
     async create(req, res) {
         try {
-            const { phone_number, password } = req.body;
+            const { phone_number, email, password } = req.body;
 
-            if (!phone_number || !password)
-                return res.status(400).json({ message: 'Invalid phone_number or password' });
+            if (!password)
+                return res.status(400).json({ message: 'Missing password. Please try again' });
+            if (!phone_number && !email)
+                return res
+                    .status(400)
+                    .json({ message: 'Missing phone_number or email. Please try again' });
+            if (phone_number && email)
+                return res.status(400).json({ message: 'Invalid. Please try again' });
+            let condition;
+            if (phone_number) condition = { key: 'phone_number', value: phone_number };
+            else condition = { key: 'email', value: email };
 
-            const query = 'SELECT * FROM users WHERE phone_number = $1 AND provider = $2';
-            const response = await pool.query(query, [phone_number, 'manual']);
+            const query = `SELECT * FROM users WHERE ${condition['key']} = $1 and (provider = $2 or provider = $3)`;
+            const response = await pool.query(query, [condition['value'], 'manual', 'both']);
 
             if (response.rows.length === 0) {
                 return res.status(400).json({ message: 'Account not found', code: 400 });

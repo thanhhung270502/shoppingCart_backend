@@ -9,14 +9,15 @@ class AuthController {
             try {
                 // Flow: 0 - create, 1 - get
                 var index = -1;
-                const getUser = await pool.query('SELECT * FROM users WHERE email = $1 AND provider = $2', [
-                    req.user._json.email,
-                    req.user.provider,
-                ]);
+                const getUser = await pool.query(
+                    'SELECT * FROM users WHERE email = $1 AND (provider = $2 OR provider = $3)',
+                    [req.user._json.email, req.user.provider, 'both'],
+                );
 
                 if (getUser.rows.length === 0) {
-                    await pool.query(
-                        'INSERT INTO users (email, password, name, provider, role, avatar) VALUES ($1, $2, $3, $4, $5, $6)',
+                    const getCurrentUser = await pool.query(
+                        `INSERT INTO users (email, password, name, provider, role, avatar_url) 
+                        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
                         [
                             req.user._json.email,
                             '',
@@ -27,22 +28,28 @@ class AuthController {
                         ],
                     );
 
-                    const getCurrentUser = await pool.query('SELECT * FROM users WHERE email = $1 AND provider = $2', [
-                        req.user._json.email,
-                        req.user.provider,
-                    ]);
+                    // const getCurrentUser = await pool.query(
+                    //     'SELECT * FROM users WHERE email = $1 AND provider = $2',
+                    //     [req.user._json.email, req.user.provider],
+                    // );
 
                     return res.status(201).json({
                         message: 'User created successfully',
                         code: 201,
                         body: {
-                            accessToken: generateToken(getCurrentUser.rows[0].id, getCurrentUser.rows[0].role),
+                            accessToken: generateToken(
+                                getCurrentUser.rows[0].id,
+                                getCurrentUser.rows[0].role,
+                            ),
                             user: {
                                 id: getCurrentUser.rows[0].id,
                                 role: getCurrentUser.rows[0].role,
                                 email: getCurrentUser.rows[0].email,
                                 name: getCurrentUser.rows[0].name,
-                                avatar: getCurrentUser.rows[0].avatar,
+                                avatar_url: getCurrentUser.rows[0].avatar_url,
+                                phone_number: getUser.rows[0].phone_number,
+                                gender: getUser.rows[0].gender,
+                                date_birth: getUser.rows[0].date_birth,
                             },
                         },
                     });
@@ -57,7 +64,10 @@ class AuthController {
                                 role: getUser.rows[0].role,
                                 email: getUser.rows[0].email,
                                 name: getUser.rows[0].name,
-                                avatar: getUser.rows[0].avatar,
+                                avatar_url: getUser.rows[0].avatar_url,
+                                phone_number: getUser.rows[0].phone_number,
+                                gender: getUser.rows[0].gender,
+                                date_birth: getUser.rows[0].date_birth,
                             },
                         },
                     });
