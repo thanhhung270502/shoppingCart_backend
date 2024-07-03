@@ -87,26 +87,31 @@ class UsersController {
             const currentTime = utils.getCurrentTimeFormatted();
 
             const response = await pool.query(
-                'INSERT INTO users (id, phone_number, password, name, avatar, provider, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
-                [id, phone_number, hashedPassword, name, avatar, 'manual', 'customer', currentTime, currentTime],
-            );
-
-            getUser = await pool.query(
-                'SELECT * FROM users WHERE phone_number = $1 AND password = $2 AND provider = $3',
-                [phone_number, hashedPassword, 'manual'],
+                'INSERT INTO users (id, phone_number, password, name, avatar, provider, role, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *',
+                [
+                    id,
+                    phone_number,
+                    hashedPassword,
+                    name,
+                    avatar,
+                    'manual',
+                    'customer',
+                    currentTime,
+                    currentTime,
+                ],
             );
 
             return res.status(201).json({
                 message: 'User created successfully',
                 code: 201,
                 body: {
-                    accessToken: generateToken(getUser.rows[0].id, getUser.rows[0].role),
+                    accessToken: generateToken(response.rows[0].id, response.rows[0].role),
                     user: {
-                        id: getUser.rows[0].id,
-                        role: getUser.rows[0].role,
-                        phone_number: getUser.rows[0].phone_number,
-                        name: getUser.rows[0].name,
-                        avatar: getUser.rows[0].avatar,
+                        id: response.rows[0].id,
+                        role: response.rows[0].role,
+                        phone_number: response.rows[0].phone_number,
+                        name: response.rows[0].name,
+                        avatar: response.rows[0].avatar,
                     },
                 },
             });
@@ -178,7 +183,10 @@ class UsersController {
                 });
             }
 
-            const response = await pool.query(`UPDATE users SET phone_number = $1 WHERE id = $2`, [phone_number, id]);
+            const response = await pool.query(`UPDATE users SET phone_number = $1 WHERE id = $2`, [
+                phone_number,
+                id,
+            ]);
 
             return res.status(200).json({
                 message: 'Updated successfully',
@@ -213,7 +221,10 @@ class UsersController {
                 });
             }
 
-            const response = await pool.query(`UPDATE users SET email = $1 WHERE id = $2`, [email, id]);
+            const response = await pool.query(`UPDATE users SET email = $1 WHERE id = $2`, [
+                email,
+                id,
+            ]);
 
             return res.status(200).json({
                 message: 'Updated successfully',
@@ -253,7 +264,10 @@ class UsersController {
 
             if (oldPasswordMatch) {
                 const hashedPassword = await bcrypt.hash(newPassword, 10);
-                const response = await pool.query(`UPDATE users SET password = $1 WHERE id = $2`, [hashedPassword, id]);
+                const response = await pool.query(`UPDATE users SET password = $1 WHERE id = $2`, [
+                    hashedPassword,
+                    id,
+                ]);
 
                 return res.status(200).json({
                     message: 'Updated successfully',
