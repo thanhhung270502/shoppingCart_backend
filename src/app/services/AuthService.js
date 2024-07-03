@@ -1,6 +1,7 @@
 const pool = require('../../config/db');
 const jwt = require('jsonwebtoken');
 const { generateToken } = require('../middlewares/authMiddlewares');
+const bcrypt = require('bcrypt');
 
 class AuthController {
     async create_or_update(req, res) {
