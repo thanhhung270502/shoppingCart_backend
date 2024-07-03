@@ -218,6 +218,7 @@ const createTableTopicBg = async () => {
         process.exit(1);
     }
 };
+
 const createTableTopicItems = async () => {
     try {
         await pool.query('drop table if exists topic_items cascade');
@@ -239,18 +240,186 @@ const createTableTopicItems = async () => {
     }
 };
 
+const createTableProductCategory = async () => {
+    try {
+        await pool.query('drop table if exists product_category cascade');
+
+        const query = `
+        CREATE TABLE product_category (
+            id              TEXT PRIMARY KEY,
+            product_id      TEXT,
+            category_1_id   TEXT,
+            category_2_id   TEXT,
+            category_3_id   TEXT,
+            category_4_id   TEXT,
+            category_5_id   TEXT,
+            FOREIGN KEY (product_id) REFERENCES products(id),
+            FOREIGN KEY (category_1_id) REFERENCES category_1(id),
+            FOREIGN KEY (category_2_id) REFERENCES category_2(id),
+            FOREIGN KEY (category_3_id) REFERENCES category_3(id),
+            FOREIGN KEY (category_4_id) REFERENCES category_4(id),
+            FOREIGN KEY (category_5_id) REFERENCES category_5(id)
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableBooks = async () => {
+    try {
+        await pool.query('drop table if exists books cascade');
+
+        const query = `
+        CREATE TABLE books (
+            id                          TEXT PRIMARY KEY,
+            publishDate                 TIMESTAMP,
+            size                        TEXT,
+            translator                  TEXT,
+            coverType                   TEXT,
+            pageCount                   TEXT,
+            publisher                   TEXT,
+            bookVersion                 TEXT,
+            bookcare                    TEXT,
+            deliveryMethod              TEXT,
+            brand                       TEXT,
+            origin                      TEXT,
+            material                    TEXT,
+            brandOrigin                 TEXT,
+            warranty                    TEXT,
+            warrantyType                TEXT,
+            warrantyPeriod              TEXT,
+            version                     TEXT,
+            responsibleAddress          TEXT,
+            responsibleUnit             TEXT,
+            packaging                   TEXT,
+            ageGroup                    TEXT,
+            preservationInstructions    TEXT
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableBrands = async () => {
+    try {
+        await pool.query('drop table if exists brands cascade');
+
+        const query = `
+        CREATE TABLE brands (
+            id      TEXT PRIMARY KEY,
+            "name"  TEXT
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableAuthors = async () => {
+    try {
+        await pool.query('drop table if exists authors cascade');
+
+        const query = `
+        CREATE TABLE authors (
+            id      TEXT PRIMARY KEY,
+            "name"  TEXT
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableBookAuthors = async () => {
+    try {
+        await pool.query('drop table if exists book_brands cascade');
+
+        const query = `
+        CREATE TABLE book_brands (
+            id          TEXT PRIMARY KEY,
+            book_id     TEXT,
+            brand_id    TEXT,
+            FOREIGN KEY (book_id) REFERENCES books(id),
+            FOREIGN KEY (brand_id) REFERENCES brands(id)
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableAuthorBrands = async () => {
+    try {
+        await pool.query('drop table if exists author_brands cascade');
+
+        const query = `
+        CREATE TABLE author_brands (
+            id          TEXT PRIMARY KEY,
+            author_id   TEXT,
+            brand_id    TEXT,
+            FOREIGN KEY (author_id) REFERENCES authors(id),
+            FOREIGN KEY (brand_id) REFERENCES brands(id)
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
+const createTableProductBooks = async () => {
+    try {
+        await pool.query('drop table if exists products_books cascade');
+
+        const query = `
+        CREATE TABLE products_books (
+            id TEXT PRIMARY KEY,
+            product_id TEXT UNIQUE,
+            book_id TEXT UNIQUE,
+            FOREIGN KEY (product_id) REFERENCES products(id),
+            FOREIGN KEY (book_id) REFERENCES books(id)
+        );`;
+
+        await pool.query(query);
+    } catch (err) {
+        console.log(err);
+        process.exit(1);
+    }
+};
+
 (async () => {
     try {
-        await createTableUsers();
-        await createTableShops();
-        await createTableShopUsers();
-        await createTableUserAddresses();
-        await createTableUserAddress();
-        await createTableProducts();
-        await createTableProductImages();
-        await createTableShopTopics();
-        await createTableTopicBg();
-        await createTableTopicItems();
+        // await createTableUsers();
+        // await createTableShops();
+        // await createTableShopUsers();
+        // await createTableUserAddresses();
+        // await createTableUserAddress();
+        // await createTableProducts();
+        // await createTableProductImages();
+        // await createTableShopTopics();
+        // await createTableTopicBg();
+        // await createTableTopicItems();
+
+        await createTableProductCategory();
+        await createTableBooks();
+        await createTableBrands();
+        await createTableAuthors();
+        await createTableBookAuthors();
+        await createTableAuthorBrands();
+        await createTableProductBooks();
 
         console.log('Waiting...');
         console.log('If program does not show anything, program run sucessfully');

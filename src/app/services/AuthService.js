@@ -15,10 +15,12 @@ class AuthController {
                 );
 
                 if (getUser.rows.length === 0) {
+                    const id = await bcrypt.hash(req.user._json.email, 10);
                     const getCurrentUser = await pool.query(
-                        `INSERT INTO users (email, password, name, provider, role, avatar_url) 
-                        VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
+                        `INSERT INTO users (id, email, password, name, provider, role, avatar_url) 
+                        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
                         [
+                            id,
                             req.user._json.email,
                             '',
                             req.user._json.name,

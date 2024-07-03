@@ -8,6 +8,7 @@
         "migrate": "node scripts/migrate.js",
         "seeds": "node scripts/seeds.js",
         "buildAddresses": "node scripts/buildAddress.js",
+        "insertProducts": "node scripts/insertProduct.js",
         "test": "NODE_OPTIONS=--experimental-vm-modules npx jest --runInBand --forceExit"
     },
     "keywords": [],
