@@ -292,6 +292,26 @@ class UsersController {
             });
         }
     }
+
+    async deleteUser(req, res) {
+        try {
+            const user_id = req.userID;
+
+            const response = await pool.query(`DELETE FROM users WHERE id = $1`, [user_id]);
+
+            return res.status(200).json({
+                message: 'Delete user successfully',
+                code: 200,
+            });
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({
+                message: 'Internal Server Error',
+                code: 500,
+                error: err,
+            });
+        }
+    }
 }
 
 module.exports = new UsersController();
