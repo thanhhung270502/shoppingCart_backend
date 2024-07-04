@@ -1,5 +1,4 @@
 const pool = require('../../config/db');
-const bcrypt = require('bcrypt');
 
 class ProductService {
     async getAllProductsByShopId(req, res) {

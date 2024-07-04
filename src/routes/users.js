@@ -8,6 +8,7 @@ router.put('/update/phone', usersService.updatePhone);
 router.put('/update/email', usersService.updateEmail);
 router.put('/update/password', usersService.updatePassword);
 router.post('/avatar', usersService.getAvatar);
+router.delete('/', usersService.deleteUser);
 
 /**
  * @swagger

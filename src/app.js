@@ -4,9 +4,9 @@ const route = require('./routes');
 const session = require('express-session');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
+require('dotenv').config();
 const passport = require('passport');
 const passportStrategy = require('./passport');
-require('dotenv').config();
 
 const app = express();
 

@@ -1,6 +1,4 @@
 const pool = require('../../config/db');
-const jwt = require('jsonwebtoken');
-const { encode } = require('../helper/user');
 const bcrypt = require('bcrypt');
 const { generateToken } = require('../middlewares/authMiddlewares');
 
